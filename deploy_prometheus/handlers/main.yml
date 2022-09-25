@@ -1,0 +1,8 @@
+---
+# handlers file for deploy_prometheus
+- name: restart prometheus
+  service:
+     name: pushgateway
+     state: restarted
+     enabled: true
+

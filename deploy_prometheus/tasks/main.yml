@@ -1,0 +1,74 @@
+---
+# tasks file for deploy_prometheus
+- name: Create prometheus group
+  group:
+    name: prometheus
+    state: present
+
+- name: Create prometheus user
+  user:
+    name: prometheus
+    shell: /bin/bash
+    group: prometheus
+    createhome: false
+
+
+- name: Create prometheus dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: 0755
+    recurse: yes
+  with_items:
+    - /etc/prometheus
+    - /var/lib/prometheus
+
+- name: Download and unzip prometheus on monitoring instance
+  unarchive:
+    src: https://github.com/prometheus/prometheus/releases/download/v2.32.1/prometheus-2.32.1.linux-amd64.tar.gz
+    dest: /home/vagrant/
+    remote_src: yes
+
+- name: Copy prometheus binary files
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin
+    owner: vagrant
+    remote_src: yes
+  with_items:
+     - /home/vagrant/prometheus-2.32.1.linux-amd64/prometheus
+     - /home/vagrant/prometheus-2.32.1.linux-amd64/promtool
+- name: Copy prometheus console libraries
+  copy:
+    src: "{{ item }}"
+    dest: /etc/prometheus
+    owner: vagrant
+    remote_src: yes
+  with_items:
+     - /home/vagrant/prometheus-2.32.1.linux-amd64/consoles
+     - /home/vagrant/prometheus-2.32.1.linux-amd64/console_libraries
+     - /home/vagrant/prometheus-2.32.1.linux-amd64/prometheus.yml
+
+- name: Upload prometheus.service file
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+  notify:
+    - restart prometheus
+
+
+- name: Upload prometheus.yml file
+  template:
+    src:  prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+  notify:
+    - restart prometheus
+
