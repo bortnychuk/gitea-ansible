@@ -1,0 +1,38 @@
+---
+# tasks file for deploy_grafana
+- name: Create a repo file for grafana
+  template:
+    src:  grafana.repo.j2
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: Install grafana
+  ansible.builtin.yum:
+    name:  grafana
+    state: present
+    update_cache: yes
+- name: Install grafana font packages
+  action: >
+     {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+  with_items:
+   - fontconfig
+   - freetype*
+   - urw-fonts
+
+- name: Upload grafana datasource
+  template:
+    src:  datasources.yaml.j2
+    dest: /etc/grafana/provisioning/datasources/datasources.yaml
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+  notify: restart grafana
+
+- name: start grafana-server
+  service:
+    name: grafana-server
+    enabled: true
+    state: started
+

@@ -1,0 +1,35 @@
+---
+# tasks file for deploy_nfs_server
+- name: Create mountable dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0777
+    recurse: yes
+  with_items:
+    - /var/nfs
+    - /var/nfs/public
+- name: install nfs-utils
+  yum: name=nfs-utils state=latest
+
+- name: enable rpcbind nfslock nfs
+  service:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - rpcbind
+    - nfslock
+    - nfs
+
+- name: Define access for nfs clients in export eile
+  template:
+    src: exports.j2
+    dest: "{{ docs_dir }}/exports"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+     - restart NFS server
+

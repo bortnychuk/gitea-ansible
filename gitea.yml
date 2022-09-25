@@ -1,0 +1,53 @@
+---
+- hosts: all
+  roles:
+    - preinstall
+
+- hosts: db
+  roles:
+    - deploy_database
+
+- hosts: apps
+  roles:
+    - deploy_gitea
+
+- hosts: db
+  roles:
+    - deploy_nfs_server
+
+- hosts: apps
+  roles: 
+    - deploy_nfs_client
+
+- hosts: app1
+  roles:
+    - connect_app1_db
+
+- hosts: app2
+  roles:
+    - connect_app2_db
+
+- hosts: lb
+  roles:
+    - deploy_loadbalancer
+
+- hosts: all
+  roles:
+    - deploy_node_exporters
+
+- hosts: all
+  roles:
+    - deploy_pushgateway
+
+- hosts: monitoring
+  roles:
+    - deploy_prometheus
+
+- hosts: monitoring
+  roles:
+    - deploy_grafana
+
+- hosts: monitoring
+  roles:
+    - deploy_alermanager
+

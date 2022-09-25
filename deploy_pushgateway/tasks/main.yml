@@ -1,0 +1,44 @@
+---
+# tasks file for deploy_pushgateway
+- name: Create pushgateway group
+  group:
+    name: pushgateway
+    state: present
+
+- name: Create pushgateway user
+  user:
+    name: pushgateway
+    group: pushgateway
+    shell: /bin/bash
+    createhome: false
+
+- name: Download and unzip pushgateway on all instances
+  unarchive:
+    src: https://github.com/prometheus/pushgateway/releases/download/v1.4.2/pushgateway-1.4.2.linux-amd64.tar.gz
+    dest: /home/vagrant/
+    remote_src: yes
+
+- name: Copy pushgateway file  to bin
+  copy:
+    src: /home/vagrant/pushgateway-1.4.2.linux-amd64/pushgateway
+    dest: /usr/local/bin
+    mode: 0755
+    owner: pushgateway
+    group: pushgateway
+    remote_src: yes
+
+- name: Upload pushgateway configs to all instances
+  template:
+    src: pushgateway.service.j2
+    dest: /etc/systemd/system/pushgateway.service
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  notify:
+     - restart pushgateway
+
+- name: start pushgateway
+  service:
+      name: pushgateway
+      enabled: true
+      state: started

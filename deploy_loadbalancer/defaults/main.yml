@@ -1,0 +1,7 @@
+---
+# defaults file for deploy_loadbalancer
+nginx_user: nginx
+nginx_group: nginx
+nginx_working_dir: /home/nginx
+nginx_confd: /etc/nginx/conf.d/
+

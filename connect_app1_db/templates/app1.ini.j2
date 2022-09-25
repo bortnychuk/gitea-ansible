@@ -1,0 +1,72 @@
+APP_NAME = Gitea: with bortnychuk =D
+RUN_USER = git
+RUN_MODE = prod
+
+[oauth2]
+JWT_SECRET = c-KOWC8E4pmeLhMS24RCEHUKX5ZHh0T5Rt7szLwYrUo
+
+[security]
+INTERNAL_TOKEN     = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2NjM1MjE1NTR9.gKxgKppu7JCBOGMbe4SBl7qvy21ng74tNF38YkBz2aA
+INSTALL_LOCK       = true
+SECRET_KEY         = r80saqw9tgDM6L1SMolW4nzhrdMSjLsJVt99aPFKtWb5NPtacM9ONbj7hqm910ZP
+PASSWORD_HASH_ALGO = pbkdf2
+
+[database]
+DB_TYPE  = mysql
+HOST     = 192.168.1.42:3306
+NAME     = gitea
+USER     = gitea
+PASSWD   = 18011993
+SCHEMA   = 
+SSL_MODE = disable
+CHARSET  = utf8
+PATH     = /var/lib/gitea/data/gitea.db
+LOG_SQL  = false
+
+[repository]
+ROOT = /var/nfs/public/
+
+[server]
+SSH_DOMAIN       = localhost
+DOMAIN           = localhost
+HTTP_PORT        = 3000
+ROOT_URL         = http://192.168.1.40:3000/
+DISABLE_SSH      = false
+SSH_PORT         = 22
+LFS_START_SERVER = true
+LFS_CONTENT_PATH = /var/nfs/public/
+LFS_JWT_SECRET   = uq5ov8dFHJc3zObMblD1EAf3AwFneK2VlE_-9UD_cDE
+OFFLINE_MODE     = false
+
+[mailer]
+ENABLED = false
+
+[service]
+REGISTER_EMAIL_CONFIRM            = false
+ENABLE_NOTIFY_MAIL                = false
+DISABLE_REGISTRATION              = false
+ALLOW_ONLY_EXTERNAL_REGISTRATION  = false
+ENABLE_CAPTCHA                    = false
+REQUIRE_SIGNIN_VIEW               = false
+DEFAULT_KEEP_EMAIL_PRIVATE        = false
+DEFAULT_ALLOW_CREATE_ORGANIZATION = false
+DEFAULT_ENABLE_TIMETRACKING       = false
+NO_REPLY_ADDRESS                  = 
+
+[picture]
+DISABLE_GRAVATAR        = false
+ENABLE_FEDERATED_AVATAR = true
+
+[openid]
+ENABLE_OPENID_SIGNIN = false
+ENABLE_OPENID_SIGNUP = false
+
+[session]
+PROVIDER = file
+
+[log]
+MODE      = console
+LEVEL     = info
+ROOT_PATH = /var/lib/gitea/log
+ROUTER    = console
+

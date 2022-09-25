@@ -1,0 +1,3 @@
+---
+# defaults file for connect_app1_db
+ini_path: /etc/gitea/

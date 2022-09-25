@@ -1,0 +1,12 @@
+---
+# defaults file for deploy_gitea
+gitea_group: git
+gitea_user: git
+gitea_working_dir: /home/git
+gitea_bin: /usr/bin/gitea
+initd_conf_dir: /etc/systemd/system/
+nginx_conf_dir: /etc/nginx/
+nginx_user: nginx
+nginx_group: nginx
+nginx_working_dir: /home/nginx
+

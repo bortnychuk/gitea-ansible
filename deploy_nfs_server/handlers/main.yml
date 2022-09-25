@@ -1,0 +1,8 @@
+---
+# handlers file for deploy_nfs_server
+- name: restart NFS server
+  ansible.builtin.service:
+    name: nfs-server
+    state: restarted
+    enabled: true
+

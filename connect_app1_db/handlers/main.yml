@@ -1,0 +1,8 @@
+---
+# handlers file for connect_app1_db
+- name: restart gitea service
+  service:
+      name: gitea.service
+      state: restarted
+      enabled: true
+

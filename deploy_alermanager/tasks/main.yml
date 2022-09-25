@@ -1,0 +1,77 @@
+---
+# tasks file for deploy_alermanager
+- name: Create alertmanager group
+  group:
+     name: alertmanager
+     system: true
+     state: present
+
+- name: Create alertmanager user
+  user:
+     name: alertmanager
+     shell: /bin/bash
+     group: alertmanager
+     createhome: false
+     home: /home/alertmanager
+
+- name: Create alertmanager dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: alertmanager
+    group: alertmanager
+    mode: 0755
+    recurse: yes
+  with_items:
+       - /alertmanager-data
+       - /etc/alertmanager
+- name: Download and unzip alertmanager on monitoring instance
+  unarchive:
+    src: https://github.com/prometheus/alertmanager/releases/download/v0.23.0/alertmanager-0.23.0.linux-amd64.tar.gz
+    dest: /home/
+    remote_src: yes
+
+- name: Copy alertmanager binary files
+  copy:
+    src: /home/alertmanager-0.23.0.linux-amd64/alertmanager
+    dest: /usr/local/bin
+    mode: 0755
+    owner: alertmanager
+    group: alertmanager
+    remote_src: yes
+- name: Copy alertmanager yml file
+  copy:
+    src: /home/alertmanager-0.23.0.linux-amd64/alertmanager.yml
+    dest: /etc/alertmanager/
+    mode: 0755
+    owner: alertmanager
+    group: alertmanager
+    remote_src: yes
+- name: Upload alertmanager datasource
+  template:
+    src:  alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+    owner: alertmanager
+    group: alertmanager
+    mode: 0644
+- name: start alertmanager
+  service:
+    name: alertmanager
+    enabled: true
+    state: started
+
+- name: start alertmanager
+  service:
+    name: alertmanager
+    enabled: true
+    state: started
+- name: Update alertmanager yml file
+  template:
+    src:  alertmanager.yml.j2
+    dest: /etc/alertmanager/alertmanager.yml
+    owner: alertmanager
+    group: alertmanager
+    mode: 0644
+  notify:
+    - restart prometheus
+

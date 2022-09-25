@@ -1,0 +1,25 @@
+---
+# tasks file for preinstall
+- name: Install reps
+  ansible.builtin.yum: 
+    name:  epel-release
+    state: present
+    update_cache: yes
+
+- name: Upgrade all packages
+  ansible.builtin.yum:
+    name: '*'
+    state: latest
+
+- name: install needed packages
+  action: >
+     {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+  with_items:
+     - net-tools
+     - nginx
+     - unzip
+     - git
+     - wget
+     - python3-pip
+     - MySQL-python
+

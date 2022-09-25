@@ -1,0 +1,23 @@
+---
+# tasks file for deploy_database
+- name: install mariadb
+  ansible.builtin.yum:
+        name: ['mariadb', 'python3-PyMySQL']
+        state: latest
+- name: start mariadb
+  service:
+    name: mariadb
+    enabled: true
+    state: started
+- name: Create a new database with name 'gitea'
+  mysql_db:
+    name: gitea
+    state: present
+- name: Create database user with password and all database privileges and 'WITH GRANT OPTION'
+  mysql_user:
+     name: "{{ gitea_user }}"
+     password: "{{ gitea_password }}"
+     priv: '*.*:ALL,GRANT'
+     state: present
+     host: '%'
+  no_log: true

@@ -1,0 +1,72 @@
+---
+# tasks file for deploy_gitea
+- name: Create gitea group
+  group:
+    name: "{{ gitea_group }}"
+    state: present
+
+- name: Create gitea user
+  user:
+    name: "{{ gitea_user }}"
+    group: "{{ gitea_group }}"
+    home: "{{ gitea_working_dir }}"
+    createhome: false
+
+- name: make sure the directory containing gitea binary exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ gitea_user }}"
+    group: "{{ gitea_group }}"
+    mode: 0755
+    recurse: yes
+  with_items:
+     - /etc/gitea
+     - /var/lib/gitea/custom
+     - /var/lib/gitea/data
+     - /var/lib/gitea/indexers
+     - /var/lib/gitea/public
+     - /var/lib/gitea/log
+
+- name: download gitea binary
+  get_url:
+     url: "https://dl.gitea.io/gitea/1.14.6/gitea-1.14.6-linux-amd64"
+     dest: "{{ gitea_bin }}"
+     owner: "{{ gitea_user }}"
+     group: "{{ gitea_group }}"
+     mode: 0755
+- name: create the gitea init.d start-up script
+  template:
+     src: gitea.service.j2
+     dest: "{{ initd_conf_dir }}/gitea.service"
+     mode: 0755
+  notify:
+     - reload systemd
+
+- name: Create nginx group
+  group:
+    name: "{{ nginx_group }}"
+    state: present
+
+- name: Create nginx user
+  user:
+    name: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    home: "{{ nginx_working_dir }}"
+
+
+- name: Create config file for nginx
+  template:
+     src: gitea.conf.j2
+     dest: "{{ nginx_conf_dir }}/gitea.conf"
+     mode: 0755
+  notify:
+     - reload nginx
+
+
+- name: enable and start the gitea web service
+  service:
+    name: gitea
+    state: started
+    enabled: yes
+

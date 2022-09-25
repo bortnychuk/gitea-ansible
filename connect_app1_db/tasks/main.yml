@@ -1,0 +1,12 @@
+---
+# tasks file for connect_app1_db
+- name: Upload config file for Gitea 1
+  template:
+    src: app1.ini.j2
+    dest: "{{ ini_path }}/app.ini"
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  notify:
+    - restart gitea service
+

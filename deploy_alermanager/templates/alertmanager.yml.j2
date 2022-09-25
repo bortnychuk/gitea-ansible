@@ -1,0 +1,15 @@
+---
+global:
+  slack_api_url: 'https://hooks.slack.com/services/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'
+
+route:
+  receiver: 'slack-notifications'
+  # All alerts in a notification have the same value for these labels.
+  group_by: [alertname, datacenter, app]
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - channel: '#alerts'
+
+
