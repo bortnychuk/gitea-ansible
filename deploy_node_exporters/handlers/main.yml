@@ -1,0 +1,12 @@
+---
+# handlers file for deploy_node_exporters
+- name: reload deamon
+  systemd:
+    daemon_reload: yes
+
+- name: restart node_exporters
+  service:
+    name: node_exporter
+    state: restarted
+    enabled: true
+

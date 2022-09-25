@@ -1,0 +1,33 @@
+---
+# tasks file for deploy_node_exporters
+- name: Create  node exporter group
+  group:
+    name: node_exporter
+    state: present
+
+- name: Create  node exporter user
+  user:
+     name: node_exporter
+     shell: /bin/bash
+     group: node_exporter
+     createhome: false
+- name: Download and unzip node-exporter on all instances
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+    dest: /home/vagrant/
+    remote_src: yes
+- name: Copy node-exporter file to bin
+  command: cp -r /home/vagrant/node_exporter-1.3.1.linux-amd64/node_exporter /usr/local/bin
+
+- name: Upload node-exporter configs to all instances
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+  notify:
+    - reload deamon
+    - restart node_exporters
+
+
